@@ -472,6 +472,11 @@ RUN if [ ${INSTALL_TAINT} = true ]; then \
 ARG INSTALL_IMAP=false
 
 RUN if [ ${INSTALL_IMAP} = true ]; then \
+  if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ] && [ $(php -r "echo PHP_MINOR_VERSION;") = "4" ]; then \
+  apk add --update imap-dev autoconf gcc g++ make openssl-dev krb5-dev && \
+  pecl install imap && \
+  docker-php-ext-enable imap; \
+  else \
   apk add --update imap-dev && \
   docker-php-ext-configure imap --with-imap --with-imap-ssl && \
   docker-php-ext-install imap \
